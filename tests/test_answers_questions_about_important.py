@@ -1,100 +1,37 @@
 import allure
-from selenium import webdriver
-from selenium.webdriver.support.wait import WebDriverWait
+import pytest
+
 from conftest import driver
-from constants import TexQuestionsAndAnswers
 from pages.main_page import MainPage
+from constants import TexQuestionsAndAnswers
 
 
+@pytest.fixture(scope="class")
+def setup_class(request, driver):
+    main_page = MainPage(driver)
+    request.cls.driver = driver
+    request.cls.main_page = main_page
+    yield
+    driver.quit()
+
+@allure.title('Класс тестов на функционал ответов на вопросы')
+@pytest.mark.usefixtures("setup_class")
 class TestAnswersQuestionsAboutImportant:
-    driver = None
-
-    @classmethod
-    def setup_class(cls):
-        cls.driver = webdriver.Firefox()
-        cls.main_page = MainPage(cls.driver)
-
-    @classmethod
-    def teardown_class(cls):
-        cls.driver.quit()
-
-    @allure.title('Открыть ответы на вопросы')
-    @allure.description(f'Клик на вопрос  проверяем корректный ответ')
-    def test_open_question_price(self, driver):
-        question = TexQuestionsAndAnswers.PRICE
-        answer = TexQuestionsAndAnswers.ANSWER_PRICE
-        wait = WebDriverWait(driver, 10)
-        self.main_page.open_answer_to_question(driver, wait, question=question)
-        text_answer = self.main_page.get_answer_to_question(wait, question=question)
-        assert text_answer == answer
+    test_data = [
+        [TexQuestionsAndAnswers.PRICE, TexQuestionsAndAnswers.ANSWER_PRICE],
+        [TexQuestionsAndAnswers.NUMBER_OF_SCOOTER, TexQuestionsAndAnswers.ANSWER_NUMBER_OF_SCOOTER],
+        [TexQuestionsAndAnswers.RENTAL_TIME, TexQuestionsAndAnswers.ANSWER_RENTAL_TIME],
+        [TexQuestionsAndAnswers.ORDER_TO_DAY, TexQuestionsAndAnswers.ANSWER_ORDER_TO_DAY],
+        [TexQuestionsAndAnswers.EXTEND_ORDER, TexQuestionsAndAnswers.ANSWER_EXTEND_ORDER],
+        [TexQuestionsAndAnswers.CHARGING_SCOOTER, TexQuestionsAndAnswers.ANSWER_CHARGING_SCOOTER],
+        [TexQuestionsAndAnswers.CANCEL_ORDER, TexQuestionsAndAnswers.ANSWER_CANCEL_ORDER],
+        [TexQuestionsAndAnswers.DELIVERY_ADDRESS, TexQuestionsAndAnswers.ANSWER_DELIVERY_ADDRESS]
+    ]
 
     @allure.title('Открыть ответы на вопросы')
     @allure.description(f'Клик на вопрос  проверяем корректный ответ')
-    def test_open_question_number_of_scooter(self, driver):
-        question = TexQuestionsAndAnswers.NUMBER_OF_SCOOTER
-        answer = TexQuestionsAndAnswers.ANSWER_NUMBER_OF_SCOOTER
-        wait = WebDriverWait(driver, 10)
-        self.main_page.open_answer_to_question(driver, wait, question=question)
-        text_answer = self.main_page.get_answer_to_question(wait, question=question)
-        assert text_answer == answer
-
-    @allure.title('Открыть ответы на вопросы')
-    @allure.description(f'Клик на вопрос  проверяем корректный ответ')
-    def test_open_question_rental_time(self, driver):
-        question = TexQuestionsAndAnswers.RENTAL_TIME
-        answer = TexQuestionsAndAnswers.ANSWER_RENTAL_TIME
-        wait = WebDriverWait(driver, 10)
-        self.main_page.open_answer_to_question(driver, wait, question=question)
-        text_answer = self.main_page.get_answer_to_question(wait, question=question)
-        assert text_answer == answer
-
-    @allure.title('Открыть ответы на вопросы')
-    @allure.description(f'Клик на вопрос  проверяем корректный ответ')
-    def test_open_question_order_to_day(self, driver):
-        question = TexQuestionsAndAnswers.ORDER_TO_DAY
-        answer = TexQuestionsAndAnswers.ANSWER_ORDER_TO_DAY
-        wait = WebDriverWait(driver, 10)
-        self.main_page.open_answer_to_question(driver, wait, question=question)
-        text_answer = self.main_page.get_answer_to_question(wait, question=question)
-        assert text_answer == answer
-
-    @allure.title('Открыть ответы на вопросы')
-    @allure.description(f'Клик на вопрос  проверяем корректный ответ')
-    def test_open_question_extend_order(self, driver):
-        question = TexQuestionsAndAnswers.EXTEND_ORDER
-        answer = TexQuestionsAndAnswers.ANSWER_EXTEND_ORDER
-        wait = WebDriverWait(driver, 10)
-        self.main_page.open_answer_to_question(driver, wait, question=question)
-        text_answer = self.main_page.get_answer_to_question(wait, question=question)
-
-        assert text_answer == answer
-
-    @allure.title('Открыть ответы на вопросы')
-    @allure.description(f'Клик на вопрос  проверяем корректный ответ')
-    def test_open_question_charging(self, driver):
-        question = TexQuestionsAndAnswers.CHARGING_SCOOTER
-        answer = TexQuestionsAndAnswers.ANSWER_CHARGING_SCOOTER
-        wait = WebDriverWait(driver, 10)
-        self.main_page.open_answer_to_question(driver, wait, question=question)
-        text_answer = self.main_page.get_answer_to_question(wait, question=question)
-        assert text_answer == answer
-
-    @allure.title('Открыть ответы на вопросы')
-    @allure.description(f'Клик на вопрос  проверяем корректный ответ')
-    def test_open_question_cancel_order(self, driver):
-        question = TexQuestionsAndAnswers.CANCEL_ORDER
-        answer = TexQuestionsAndAnswers.ANSWER_CANCEL_ORDER
-        wait = WebDriverWait(driver, 10)
-        self.main_page.open_answer_to_question(driver, wait, question=question)
-        text_answer = self.main_page.get_answer_to_question(wait, question=question)
-        assert text_answer == answer
-
-    @allure.title('Открыть ответы на вопросы')
-    @allure.description(f'Клик на вопрос  проверяем корректный ответ')
-    def test_open_question_delivery_address(self, driver):
-        question = TexQuestionsAndAnswers.DELIVERY_ADDRESS
-        answer = TexQuestionsAndAnswers.ANSWER_DELIVERY_ADDRESS
-        wait = WebDriverWait(driver, 10)
-        self.main_page.open_answer_to_question(driver, wait, question=question)
-        text_answer = self.main_page.get_answer_to_question(wait, question=question)
+    @pytest.mark.parametrize('question, answer', test_data)
+    def test_get_answer_to_you_question(self, question, answer):
+        self.main_page.click_to_question(question=question)
+        text_answer = self.main_page.get_answer_to_question(question=question)
         assert text_answer == answer

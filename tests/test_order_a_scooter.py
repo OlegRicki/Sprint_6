@@ -1,15 +1,25 @@
 import allure
 import pytest
-from selenium import webdriver
-from selenium.webdriver.support.wait import WebDriverWait
-from pages.order_page import PagesOrder
 
-from constants import TestUrl
+from pages.main_page import MainPage
+from pages.order_page import OrderPage
 from conftest import driver
 
 
+@pytest.fixture(scope="class")
+def setup_class(request, driver):
+    order_page = OrderPage(driver)
+    request.cls.driver = driver
+    request.cls.order_page = order_page
+    main_page = MainPage(driver)
+    request.cls.driver = driver
+    request.cls.main_page = main_page
+    yield
+    driver.quit()
+
+
+@pytest.mark.usefixtures("setup_class")
 class TestOrderAScooter:
-    driver = None
     parametrize = 'name, surname, address, name_station, number, data, period, color, comment'
     test_data = [
         ['тестимя', 'тестфамилия', 'г.Москва', 'Черкизовская',
@@ -18,46 +28,33 @@ class TestOrderAScooter:
          89057793440, '20.08.24', 'сутки', 'black', 'TEST2']
     ]
 
-    @classmethod
-    def setup_class(cls):
-        cls.driver = webdriver.Firefox()
-        cls.driver.get(TestUrl.BASE_URL)
-        cls.page_order = PagesOrder(cls.driver)
-
-    @classmethod
-    def teardown_class(cls):
-        cls.driver.quit()
+    def setup_method(self, method):
+        self.order_page.open_main_page()
 
     @allure.title('Заказ самоката через верхнюю кнопку')
     @allure.description('Заполняем поля и проверяем что появилось сообщение об успешном заказе')
     @pytest.mark.parametrize(f'{parametrize}', test_data)
     def test_scooter_button_up(
             self, driver, name, surname, address, name_station, number, data, period, color, comment):
-        wait = WebDriverWait(driver, 10)
-        self.page_order.click_up_button_order(wait)
+        self.main_page.click_up_button_order()
 
-        self.page_order.entry_fields_order(
-            wait, name=name, surname=surname, address=address, name_station=name_station,
-            number=number, data=data, period=period, color=color, comment=comment)
-        self.page_order.check_order_success(wait)
-        self.page_order.click_logo_scooter(driver, wait)
-        self.page_order.check_url_after_click_logo_scooter(driver)
-        self.page_order.click_logo_yandex(wait)
-        self.page_order.check_url_yandex(driver, wait)
+        self.order_page.entry_fields_order(
+            name=name, surname=surname, address=address, name_station=name_station,
+            number=number)
+        self.order_page.entry_fields_rent(data=data, period=period, color=color, comment=comment)
 
-    @allure.title('Заказ самоката через нижную кнопку')
+        self.order_page.check_order_success()
+
+    @allure.title('Заказ самоката через нижнюю кнопку')
     @allure.description('Заполняем поля и проверяем что появилось сообщение об успешном заказе')
     @pytest.mark.parametrize(f'{parametrize}', test_data)
     def test_scooter_button_down(
             self, driver, name, surname, address, name_station, number, data, period, color, comment):
-        wait = WebDriverWait(driver, 10)
-        self.page_order.click_down_button_order(driver, wait)
+        self.main_page.click_down_button_order()
 
-        self.page_order.entry_fields_order(
-            wait, name=name, surname=surname, address=address, name_station=name_station,
-            number=number, data=data, period=period, color=color, comment=comment)
-        self.page_order.check_order_success(wait)
-        self.page_order.click_logo_scooter(driver, wait)
-        self.page_order.check_url_after_click_logo_scooter(driver)
-        self.page_order.click_logo_yandex(wait)
-        self.page_order.check_url_yandex(driver, wait)
+        self.order_page.entry_fields_order(
+            name=name, surname=surname, address=address, name_station=name_station,
+            number=number)
+        self.order_page.entry_fields_rent(data=data, period=period, color=color, comment=comment)
+
+        self.order_page.check_order_success()
