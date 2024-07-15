@@ -6,19 +6,6 @@ from pages.order_page import OrderPage
 from conftest import driver
 
 
-@pytest.fixture(scope="class")
-def setup_class(request, driver):
-    order_page = OrderPage(driver)
-    request.cls.driver = driver
-    request.cls.order_page = order_page
-    main_page = MainPage(driver)
-    request.cls.driver = driver
-    request.cls.main_page = main_page
-    yield
-    driver.quit()
-
-
-@pytest.mark.usefixtures("setup_class")
 class TestOrderAScooter:
     parametrize = 'name, surname, address, name_station, number, data, period, color, comment'
     test_data = [
@@ -28,33 +15,42 @@ class TestOrderAScooter:
          89057793440, '20.08.24', 'сутки', 'black', 'TEST2']
     ]
 
-    def setup_method(self, method):
-        self.order_page.open_main_page()
+    @classmethod
+    @pytest.fixture(scope="class", autouse=True)
+    def setup_class(cls, request, driver):
+        cls.driver = driver
 
     @allure.title('Заказ самоката через верхнюю кнопку')
     @allure.description('Заполняем поля и проверяем что появилось сообщение об успешном заказе')
     @pytest.mark.parametrize(f'{parametrize}', test_data)
     def test_scooter_button_up(
             self, driver, name, surname, address, name_station, number, data, period, color, comment):
-        self.main_page.click_up_button_order()
+        order_page = OrderPage(driver)
+        main_page = MainPage(driver)
 
-        self.order_page.entry_fields_order(
+        main_page.click_up_button_order()
+
+        order_page.entry_fields_order(
             name=name, surname=surname, address=address, name_station=name_station,
             number=number)
-        self.order_page.entry_fields_rent(data=data, period=period, color=color, comment=comment)
+        order_page.entry_fields_rent(data=data, period=period, color=color, comment=comment)
 
-        self.order_page.check_order_success()
+        order_page.check_order_success()
+        order_page.open_main_page()
 
     @allure.title('Заказ самоката через нижнюю кнопку')
     @allure.description('Заполняем поля и проверяем что появилось сообщение об успешном заказе')
     @pytest.mark.parametrize(f'{parametrize}', test_data)
     def test_scooter_button_down(
             self, driver, name, surname, address, name_station, number, data, period, color, comment):
-        self.main_page.click_down_button_order()
+        order_page = OrderPage(driver)
+        main_page = MainPage(driver)
+        main_page.click_down_button_order()
 
-        self.order_page.entry_fields_order(
+        order_page.entry_fields_order(
             name=name, surname=surname, address=address, name_station=name_station,
             number=number)
-        self.order_page.entry_fields_rent(data=data, period=period, color=color, comment=comment)
+        order_page.entry_fields_rent(data=data, period=period, color=color, comment=comment)
 
-        self.order_page.check_order_success()
+        order_page.check_order_success()
+        order_page.open_main_page()

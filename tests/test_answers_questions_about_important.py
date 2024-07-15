@@ -6,16 +6,6 @@ from pages.main_page import MainPage
 from constants import TexQuestionsAndAnswers
 
 
-@pytest.fixture(scope="class")
-def setup_class(request, driver):
-    main_page = MainPage(driver)
-    request.cls.driver = driver
-    request.cls.main_page = main_page
-    yield
-    driver.quit()
-
-@allure.title('Класс тестов на функционал ответов на вопросы')
-@pytest.mark.usefixtures("setup_class")
 class TestAnswersQuestionsAboutImportant:
     test_data = [
         [TexQuestionsAndAnswers.PRICE, TexQuestionsAndAnswers.ANSWER_PRICE],
@@ -28,10 +18,16 @@ class TestAnswersQuestionsAboutImportant:
         [TexQuestionsAndAnswers.DELIVERY_ADDRESS, TexQuestionsAndAnswers.ANSWER_DELIVERY_ADDRESS]
     ]
 
+    @classmethod
+    @pytest.fixture(scope="class", autouse=True)
+    def setup_class(cls, request, driver):
+        cls.driver = driver
+
     @allure.title('Открыть ответы на вопросы')
-    @allure.description(f'Клик на вопрос  проверяем корректный ответ')
+    @allure.description('Клик на вопрос и проверка корректного ответа')
     @pytest.mark.parametrize('question, answer', test_data)
-    def test_get_answer_to_you_question(self, question, answer):
-        self.main_page.click_to_question(question=question)
-        text_answer = self.main_page.get_answer_to_question(question=question)
+    def test_get_answer_to_you_question(self, driver, question, answer):
+        main_page = MainPage(driver)
+        main_page.click_to_question(question=question)
+        text_answer = main_page.get_answer_to_question(question=question)
         assert text_answer == answer
