@@ -12,10 +12,3 @@ def driver():
     yield driver
     driver.quit()
 
-# @pytest.fixture
-# def driver():
-#     driver = webdriver.Firefox()
-#     driver.maximize_window()
-#     driver.get(TestUrl.BASE_URL)
-#     yield driver
-#     driver.quit()
