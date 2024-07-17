@@ -23,7 +23,7 @@ class BasePage:
         return text
 
     def check_displayed_element(self, locator):
-        self.wait.until(ec.visibility_of_element_located(locator)).is_displayed()
+        return self.wait.until(ec.visibility_of_element_located(locator)).is_displayed()
 
     def scroll_to_element(self, locator):
         element = self.wait.until(ec.element_to_be_clickable(locator))
@@ -32,9 +32,9 @@ class BasePage:
     def open_tab(self, number_tab: int):
         self.driver.switch_to.window(self.driver.window_handles[number_tab])
 
-    def check_current_curl(self, base_url):
-        current_url = self.driver.current_url
-        assert current_url == base_url
+    def get_current_url(self):
+        return self.driver.current_url
+
 
     def wait_for_tab_to_page(self, number_tab: int):
         WebDriverWait(self.driver, 10).until(lambda d: len(d.window_handles) > number_tab)

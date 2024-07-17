@@ -18,11 +18,6 @@ class TestAnswersQuestionsAboutImportant:
         [TexQuestionsAndAnswers.DELIVERY_ADDRESS, TexQuestionsAndAnswers.ANSWER_DELIVERY_ADDRESS]
     ]
 
-    @classmethod
-    @pytest.fixture(scope="class", autouse=True)
-    def setup_class(cls, request, driver):
-        cls.driver = driver
-
     @allure.title('Открыть ответы на вопросы')
     @allure.description('Клик на вопрос и проверка корректного ответа')
     @pytest.mark.parametrize('question, answer', test_data)

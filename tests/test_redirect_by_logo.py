@@ -1,5 +1,4 @@
 import allure
-import pytest
 
 from pages.main_page import MainPage
 from pages.order_page import OrderPage
@@ -8,11 +7,6 @@ from conftest import driver
 
 
 class TestRedirectByLogo:
-
-    @classmethod
-    @pytest.fixture(scope="class", autouse=True)
-    def setup_class(cls, request, driver):
-        cls.driver = driver
 
     @allure.title('Тест перенаправление на главную страницу, после клика на лого "Самокат" ')
     @allure.description('Переход на любую страницу(кроме главной),'
@@ -23,7 +17,7 @@ class TestRedirectByLogo:
 
         main_page.click_up_button_order()
         main_page.click_logo_scooter()
-        order_page.check_url_after_click_logo_scooter()
+        assert order_page.check_url_after_click_logo_scooter()
         order_page.open_main_page()
 
     @allure.title('Тест перенаправление на страницу дзена, после клика на лого "Яндекс" ')
@@ -34,5 +28,5 @@ class TestRedirectByLogo:
         zen_page = ZenPage(driver)
 
         main_page.click_logo_yandex()
-        zen_page.check_url_yandex()
+        assert zen_page.check_url_yandex()
         order_page.open_main_page()

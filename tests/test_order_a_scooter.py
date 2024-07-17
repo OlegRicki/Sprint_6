@@ -1,3 +1,5 @@
+import time
+
 import allure
 import pytest
 
@@ -15,11 +17,6 @@ class TestOrderAScooter:
          89057793440, '20.08.24', 'сутки', 'black', 'TEST2']
     ]
 
-    @classmethod
-    @pytest.fixture(scope="class", autouse=True)
-    def setup_class(cls, request, driver):
-        cls.driver = driver
-
     @allure.title('Заказ самоката через верхнюю кнопку')
     @allure.description('Заполняем поля и проверяем что появилось сообщение об успешном заказе')
     @pytest.mark.parametrize(f'{parametrize}', test_data)
@@ -35,7 +32,8 @@ class TestOrderAScooter:
             number=number)
         order_page.entry_fields_rent(data=data, period=period, color=color, comment=comment)
 
-        order_page.check_order_success()
+        assert order_page.check_order_success()
+        order_page.click_to_button_see_status()
         order_page.open_main_page()
 
     @allure.title('Заказ самоката через нижнюю кнопку')
@@ -51,6 +49,6 @@ class TestOrderAScooter:
             name=name, surname=surname, address=address, name_station=name_station,
             number=number)
         order_page.entry_fields_rent(data=data, period=period, color=color, comment=comment)
-
-        order_page.check_order_success()
+        assert order_page.check_order_success()
+        order_page.click_to_button_see_status()
         order_page.open_main_page()

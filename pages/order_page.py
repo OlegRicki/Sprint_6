@@ -59,9 +59,13 @@ class OrderPage(BasePage):
 
     @allure.step('Проверить отображение кнопки "Заказ оформлен"')
     def check_order_success(self):
-        self.check_displayed_element(locator=OrderPageLocators.ORDER_IS_PROCESSED)
+        return self.check_displayed_element(locator=OrderPageLocators.ORDER_IS_PROCESSED)
+
+    def click_to_button_see_status(self):
         self.click_to_element(locator=OrderPageLocators.BUTTON_SEE_STATUS)
 
     @allure.step('Проверить урл после клика на лого "Самокат"')
     def check_url_after_click_logo_scooter(self):
-        self.check_current_curl(TestUrl.BASE_URL)
+        current_url = self.get_current_url()
+        return current_url == TestUrl.BASE_URL
+
